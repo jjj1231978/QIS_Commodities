@@ -102,9 +102,15 @@ strategies:
     n_short: 5
     rebalance_freq: "monthly"
   backwardation_momentum:
+    # 3/3, not 4/4. The signal needs a far contract (F12, falling back to
+    # F8) with >100 observations, which leaves only ~11 of the 18 configured
+    # roots eligible — and _rank_to_weights skips any rebalance with fewer
+    # than n_long + n_short valid names. At 4/4 that 8-name floor was missed
+    # often enough that the strategy carried a position on 4.2% of days.
+    # 3/3 drops the floor to 6 so it can actually rank in a shallow universe.
     enabled: true
-    n_long: 4
-    n_short: 4
+    n_long: 3
+    n_short: 3
     rebalance_freq: "monthly"
   intraday_trend:
     enabled: false             # requires minute data — deferred
