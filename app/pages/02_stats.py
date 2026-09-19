@@ -68,6 +68,7 @@ if dl.REFERENCE_AVAILABLE:
 else:
     st.subheader("Sharpe ratio by strategy")
     sr_compare = stats[["sharpe_ratio"]].dropna().rename(columns={"sharpe_ratio": "Realised"})
-fig = px.bar(sr_compare, barmode="group", labels={"value": "Sharpe", "index": "Strategy"})
+fig = px.bar(sr_compare, barmode="group")
+fig.update_layout(yaxis_title="Sharpe", xaxis_title="Strategy", legend_title="")
 fig.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10))
 st.plotly_chart(fig, width="stretch")

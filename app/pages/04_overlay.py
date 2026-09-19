@@ -84,26 +84,26 @@ cols = st.columns(2)
 with cols[0]:
     fig = px.line(
         cumulative(overlay["scaled_return"].dropna()),
-        labels={"value": "Equity", "index": "Date"},
         title="Cumulative return (vol-targeted)",
     )
-    fig.update_layout(height=320, showlegend=False, margin=dict(l=10, r=10, t=40, b=10))
+    fig.update_layout(height=320, showlegend=False, margin=dict(l=10, r=10, t=40, b=10),
+                      yaxis_title="cum ret", xaxis_title="Date")
     st.plotly_chart(fig, width="stretch")
 with cols[1]:
     fig = px.line(
         overlay[["rolling_vol"]].dropna(),
-        labels={"value": "Annualised vol", "index": "Date"},
         title="Rolling realised vol (pre-scale)",
     )
-    fig.update_layout(height=320, showlegend=False, margin=dict(l=10, r=10, t=40, b=10))
+    fig.update_layout(height=320, showlegend=False, margin=dict(l=10, r=10, t=40, b=10),
+                      yaxis_title="Annualised vol", xaxis_title="Date")
     fig.update_yaxes(tickformat=".1%")
     st.plotly_chart(fig, width="stretch")
 
 st.subheader("Vol-target scale factor")
 fig = px.line(
     overlay[["scale_factor"]].dropna(),
-    labels={"value": "Leverage", "index": "Date"},
 )
-fig.update_layout(height=260, showlegend=False, margin=dict(l=10, r=10, t=10, b=10))
+fig.update_layout(height=260, showlegend=False, margin=dict(l=10, r=10, t=10, b=10),
+                  yaxis_title="Leverage", xaxis_title="Date")
 fig.add_hline(y=1.0, line_dash="dot", line_color="grey")
 st.plotly_chart(fig, width="stretch")
