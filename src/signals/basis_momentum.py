@@ -86,7 +86,14 @@ class BasisMomentumSignal(BaseSignal):
         n_short: int,
     ) -> pd.DataFrame:
         """Rank cross-sectionally: long steepening, short flattening."""
-        weights = pd.DataFrame(0.0, index=rebal_dates, columns=signal_df.columns)
+        # NaN, not 0.0. A rebalance that fails the guards below must leave its
+        # row missing so the caller's ffill carries the previous position
+        # forward; an explicit zero would instead flatten the book until the
+        # next successful rebalance. Successful rows are fully written (zeros
+        # for unselected names) so ffill never leaks a stale leg.
+        weights = pd.DataFrame(
+            float("nan"), index=rebal_dates, columns=signal_df.columns
+        )
 
         for date in rebal_dates:
             if date not in signal_df.index:
@@ -103,10 +110,13 @@ class BasisMomentumSignal(BaseSignal):
 
             # Gross = 1.0 (long sum = +0.5, short sum = -0.5), matching the
             # dollar-neutral convention used by carry.
+            weights.loc[date] = 0.0
             weights.loc[date, longs] = 0.5 / n_long
             weights.loc[date, shorts] = -0.5 / n_short
 
-        return weights
+        # Rows still all-NaN are skipped rebalances — drop them so the
+        # caller's ffill reaches the last successful allocation.
+        return weights.dropna(how="all")
 
 
 def _fit_curve_slope(ts: pd.DataFrame, poly_order: int) -> pd.Series:

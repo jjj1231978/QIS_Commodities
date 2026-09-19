@@ -44,9 +44,21 @@ Net of costs, full sample:
 | Backwardation momentum | −0.46 | −1.5% | 3.2% | −19.2% |
 | **Portfolio** | **0.53** | **2.9%** | **5.4%** | **−15.1%** |
 
-Carry and value carry the book. The two slope-based rankers and congestion
-detract over this sample — see "Known limitations" below before reading much
-into either result.
+Carry and value carry the book.
+
+> **The backwardation momentum figure above is not a result.** The committed
+> artifacts predate a fix to `_rank_to_weights`: a rebalance that could not rank
+> enough names wrote an explicit zero row, which then forward-filled and flattened
+> the book until the next successful rebalance. Combined with the F12 requirement
+> starving the cross-section, that held the strategy flat on 97.6% of days — its
+> −0.46 Sharpe reflects roughly 80 days of trading over eleven years, not the
+> strategy. The code now holds the previous position instead; these numbers will
+> change when the pipeline is next re-run. `value` and `basis_momentum` shared the
+> same code path and are affected to a lesser degree.
+
+Congestion's near-flat line is expected rather than broken: it is deliberately out
+of the market outside business days 1–9, so ~60% of days are genuinely zero, and
+its 0.6% vol makes it a hairline next to the others.
 
 ## How it is built
 
