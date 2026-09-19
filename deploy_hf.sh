@@ -145,9 +145,13 @@ trap 'git worktree remove --force "$WT" 2>/dev/null || true; rm -f "$ASKPASS"' E
 
     # The Hub's pre-receive hook rejects raw files over 10 MB. This repo uses no
     # LFS, so fail here rather than after a long upload.
+    # NB: the `if` is load-bearing. Written as `[ ... ] && echo`, a false test
+    # makes the loop body's last command return 1, so the loop exits non-zero,
+    # the command substitution inherits it, and `set -e` kills this subshell
+    # silently before the push ever runs.
     big=$(git ls-files | while read -r f; do
               sz=$(git cat-file -s ":$f" 2>/dev/null || echo 0)
-              [ "$sz" -gt 10000000 ] && echo "  $f ($sz bytes)"
+              if [ "$sz" -gt 10000000 ]; then echo "  $f ($sz bytes)"; fi
           done)
     if [ -n "$big" ]; then
         echo "ERROR: files over the Hub's 10 MB raw limit (add Git LFS or exclude them):" >&2
