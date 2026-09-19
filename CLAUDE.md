@@ -54,7 +54,8 @@ src/
 app/                    — Streamlit dashboard (multi-page via st.navigation)
 ├── streamlit_app.py    — entry point: `streamlit run app/streamlit_app.py`
 ├── lib/                — shared loaders + chart helpers
-└── pages/              — 01_performance, 02_stats, 03_correlations, 04_overlay, 05_data
+└── pages/              — nav order: 05_data, 01_performance, 02_stats, 03_correlations
+                          (04_overlay is on disk but unlisted in st.navigation)
 
 notebooks/              — exploratory scripts (figures saved to notebooks/figures/)
 ```

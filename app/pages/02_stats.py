@@ -6,7 +6,7 @@ import streamlit as st
 from app.lib import data_loader as dl
 from app.lib.plots import build_stats_table
 
-st.title("Stats vs Reference")
+st.title("Stats vs Reference" if dl.REFERENCE_AVAILABLE else "Stats")
 
 strategy_returns = dl.load_strategy_returns()
 overlay = dl.load_overlay()

@@ -27,10 +27,17 @@ st.set_page_config(
 
 PAGES_DIR = Path(__file__).resolve().parent / "pages"
 
+# The reference figures are third-party and ship only in a local build, so the
+# published Space has no reference to compare against. Name the tab for what it
+# actually shows rather than promising a column that is not there.
+from app.lib.data_loader import REFERENCE_AVAILABLE  # noqa: E402
+
+STATS_TITLE = "Stats vs Reference" if REFERENCE_AVAILABLE else "Stats"
+
 pages = [
     st.Page(PAGES_DIR / "05_data.py", title="Data", icon=":material/table_view:"),
     st.Page(PAGES_DIR / "01_performance.py", title="Performance", icon=":material/timeline:"),
-    st.Page(PAGES_DIR / "02_stats.py", title="Stats vs Reference", icon=":material/leaderboard:"),
+    st.Page(PAGES_DIR / "02_stats.py", title=STATS_TITLE, icon=":material/leaderboard:"),
     st.Page(PAGES_DIR / "03_correlations.py", title="Correlations", icon=":material/grid_on:"),
 ]
 

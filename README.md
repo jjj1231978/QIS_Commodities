@@ -23,12 +23,17 @@ BCOM constituents, net of modelled transaction costs.
 
 ## What the pages show
 
+Navigation order is Data first — the tables everything else is derived from.
+
 | Page | Contents |
 |---|---|
-| **Data** | Raw per-strategy return series and the portfolio frame |
-| **Performance** | Cumulative return, drawdown, rolling Sharpe, headline portfolio metrics, and how the portfolio is constructed |
-| **Stats vs Reference** | Realised metrics per strategy, side by side where a reference is available |
+| **Data** | The two source tables, downloadable as CSV: per-strategy daily returns net of costs, and the portfolio series with every step of the vol-targeting calculation. Expanders derive each column from the code. |
+| **Performance** | Cumulative return, drawdown and rolling Sharpe (window selectable: 63/126/252/504d), headline portfolio metrics, and an expander on how the portfolio is constructed |
+| **Stats** | Realised metrics per strategy. The tab is named *Stats vs Reference* and gains comparison columns only where the local reference file is present; this published build ships without it |
 | **Correlations** | Strategy return correlation matrix |
+
+A fifth page, **Overlay detail**, exists in `app/pages/` but is not in the
+navigation; its content was folded into Performance.
 
 ## Results
 
@@ -110,7 +115,8 @@ Both the GitHub repo and the Space are **public**. The split is deliberate.
 
 **Published** — everything needed to audit or reproduce the work: all source,
 configs and tests, plus the per-strategy backtest outputs and the portfolio
-series the viewer reads.
+series the viewer reads. The Data page exposes both as CSV downloads, and its
+expanders document how every figure is derived.
 
 **Not published:**
 
