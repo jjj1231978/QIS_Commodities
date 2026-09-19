@@ -5,6 +5,7 @@ import plotly.express as px
 import streamlit as st
 
 from src.backtest.metrics import compute_diversification_ratio, compute_metrics
+from src.backtest.portfolio import build_overlay_portfolio
 from src.config import load_config
 
 from app.lib import data_loader as dl
@@ -28,24 +29,48 @@ strategy_returns, overlay, selected, show_overlay, log_scale = dl.render_sidebar
 )
 sel_returns = {k: v for k, v in strategy_returns.items() if k in selected}
 
+# The stored portfolio is the pipeline's, built from every strategy. When the
+# sidebar narrows the selection, rebuild the blend from what is actually
+# selected so the portfolio line agrees with the lines around it — rebuilding
+# from the stored per-strategy returns reproduces the pipeline's own output
+# exactly, so this is faithful rather than an approximation.
+_is_full_set = set(selected) == set(strategy_returns)
+_whatif = bool(selected) and not _is_full_set
+if _whatif:
+    _o = load_config()["overlay"]
+    rebuilt = build_overlay_portfolio(
+        sel_returns, _o["weighting"], _o["vol_target"], _o["vol_lookback_days"]
+    )
+    overlay = rebuilt if not rebuilt.empty else overlay
+_pf_label = f"Portfolio ({len(selected)} of {len(strategy_returns)})" if _whatif else "Portfolio"
+_pf_series = "portfolio (selected)" if _whatif else "portfolio"
+
 # Headline metrics
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     m = compute_metrics(overlay["scaled_return"].dropna())
+    if _whatif:
+        st.warning(
+            f"**What-if blend.** These figures rebuild the portfolio from the "
+            f"{len(selected)} selected strategies, not the {len(strategy_returns)} the "
+            f"pipeline ran. Picking a subset after seeing the results is not a portfolio "
+            f"anyone could have held — select every strategy for the reported number.",
+            icon=":material/science:",
+        )
     c1, c2, c3, c4, c5 = st.columns(5)
     # Reference figures are third-party research kept out of this repo; when the
     # local file is absent the tiles simply carry no comparison delta.
-    _has_ref = "portfolio" in REF_BENCHMARK.index
+    _has_ref = "portfolio" in REF_BENCHMARK.index and not _whatif
 
     def _ref(col: str, fmt: str) -> str | None:
         if not _has_ref:
             return None
         return f"Ref: {format(REF_BENCHMARK.loc['portfolio', col], fmt)}"
 
-    c1.metric("Portfolio Sharpe", f"{m['sharpe_ratio']:.2f}", _ref("ref_sharpe", ".2f"))
-    c2.metric("Portfolio Return", f"{m['annualized_return']:.1%}", _ref("ref_return", ".1%"))
-    c3.metric("Portfolio Vol", f"{m['annualized_vol']:.1%}", _ref("ref_vol", ".1%"))
-    c4.metric("Portfolio MaxDD", f"{m['max_drawdown']:.1%}", _ref("ref_max_dd", ".1%"))
-    dr = compute_diversification_ratio(strategy_returns)
+    c1.metric(f"{_pf_label} Sharpe", f"{m['sharpe_ratio']:.2f}", _ref("ref_sharpe", ".2f"))
+    c2.metric(f"{_pf_label} Return", f"{m['annualized_return']:.1%}", _ref("ref_return", ".1%"))
+    c3.metric(f"{_pf_label} Vol", f"{m['annualized_vol']:.1%}", _ref("ref_vol", ".1%"))
+    c4.metric(f"{_pf_label} MaxDD", f"{m['max_drawdown']:.1%}", _ref("ref_max_dd", ".1%"))
+    dr = compute_diversification_ratio(sel_returns or strategy_returns)
     c5.metric("Diversification ratio", f"{dr:.2f}", "Ref: ~2.0" if _has_ref else None)
 
     with st.expander("How the portfolio is constructed"):
@@ -90,7 +115,7 @@ if not sel_returns:
 st.subheader("Cumulative return (net of costs)")
 cum_df = pd.DataFrame({k: cumulative(v) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
-    cum_df["portfolio"] = cumulative(overlay["scaled_return"].dropna())
+    cum_df[_pf_series] = cumulative(overlay["scaled_return"].dropna())
 fig = px.line(cum_df, labels={"value": "Equity", "index": "Date", "variable": "Strategy"})
 if log_scale:
     fig.update_yaxes(type="log")
@@ -100,7 +125,7 @@ st.plotly_chart(fig, width="stretch")
 st.subheader("Drawdown")
 dd_df = pd.DataFrame({k: drawdown(v) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
-    dd_df["portfolio"] = drawdown(overlay["scaled_return"].dropna())
+    dd_df[_pf_series] = drawdown(overlay["scaled_return"].dropna())
 fig_dd = px.area(dd_df, labels={"value": "Drawdown", "index": "Date", "variable": "Strategy"})
 fig_dd.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
 fig_dd.update_yaxes(tickformat=".0%")
@@ -120,7 +145,7 @@ rolling_window = st.select_slider(
 )
 rs_df = pd.DataFrame({k: rolling_sharpe(v, rolling_window) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
-    rs_df["portfolio"] = rolling_sharpe(overlay["scaled_return"].dropna(), rolling_window)
+    rs_df[_pf_series] = rolling_sharpe(overlay["scaled_return"].dropna(), rolling_window)
 fig_rs = px.line(rs_df, labels={"value": "Sharpe", "index": "Date", "variable": "Strategy"})
 fig_rs.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
 fig_rs.add_hline(y=0, line_dash="dot", line_color="grey")
