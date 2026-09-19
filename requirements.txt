@@ -1,0 +1,29 @@
+# Data acquisition
+databento>=0.41.0
+
+# Data processing
+pandas>=2.0
+numpy>=1.24
+scipy>=1.10
+
+# Visualization
+matplotlib>=3.7
+plotly>=5.18
+streamlit>=1.30
+
+# Configuration
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# Reporting agents (multi-agent research note generation)
+anthropic>=0.40.0
+openai>=1.50.0
+pypdf>=4.0
+
+# Testing
+pytest>=7.0
+pytest-cov>=4.0
+
+# Notebooks
+jupyter>=1.0.0
+ipykernel>=6.25.0

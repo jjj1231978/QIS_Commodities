@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# IDE / tooling
+.claude/
+.vscode/
+.idea/
+.DS_Store
+
+# Secrets
+.env
+*.key
+
+# Spec-kit working files
+specs/
+.specify/
+
+# Raw vendor data — licensed Databento pulls, never published.
+data/raw/
+
+# Reference-report figures transcribed from a third-party research report
+# licensed for personal use. This repo has no right to redistribute them, so
+# they stay local; the app and the reporting pack degrade to "no reference"
+# when the file is absent. See README, "What is and isn't published".
+data/reference/
+!data/reference/.gitkeep
+
+# The source PDF has never been committed, for the same reason.
+Sys_Commodity.pdf
+reference_paper.pdf
+
+# data/processed is excluded wholesale, then the specific artifacts the
+# Streamlit viewer reads are whitelisted back in. Order matters — the last
+# matching pattern wins, so these negations must follow the exclusion.
+#
+# Deliberately NOT whitelisted:
+#   *_weights.parquet          position matrices; no page reads them
+#   carry_f6/_beta_hedged/_optimised   variant backtests, excluded from the
+#                                      portfolio and absent from the viewer
+#   _cache/                    extracted paper text (third-party, see above)
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/carry_backtest.parquet
+!data/processed/value_backtest.parquet
+!data/processed/trend_backtest.parquet
+!data/processed/congestion_backtest.parquet
+!data/processed/basis_momentum_backtest.parquet
+!data/processed/backwardation_momentum_backtest.parquet
+!data/processed/overlay_portfolio.parquet

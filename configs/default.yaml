@@ -1,0 +1,146 @@
+universe:
+  commodities:
+    energy:
+      - {name: "WTI Crude Oil", root: "CL", exchange: "GLBX.MDP3", bcom_weight: 0.08, months: "FGHJKMNQUVXZ", seasonal: false}
+      - {name: "Brent Crude Oil", root: "CB", exchange: "GLBX.MDP3", bcom_weight: 0.07, months: "FGHJKMNQUVXZ", seasonal: false}
+      - {name: "Natural Gas", root: "NG", exchange: "GLBX.MDP3", bcom_weight: 0.08, months: "FGHJKMNQUVXZ", seasonal: true}
+      - {name: "RBOB Gasoline", root: "RB", exchange: "GLBX.MDP3", bcom_weight: 0.04, months: "FGHJKMNQUVXZ", seasonal: false}
+      - {name: "Heating Oil", root: "HO", exchange: "GLBX.MDP3", bcom_weight: 0.04, months: "FGHJKMNQUVXZ", seasonal: false}
+      # - {name: "Gas Oil", root: "QS", exchange: "IFEU.IMPACT", bcom_weight: 0.03, months: "FGHJKMNQUVXZ", seasonal: false}  # IFEU.IMPACT too expensive
+    grains:
+      - {name: "Corn", root: "ZC", exchange: "GLBX.MDP3", bcom_weight: 0.06, months: "HKNUZ", seasonal: true}
+      - {name: "Soybeans", root: "ZS", exchange: "GLBX.MDP3", bcom_weight: 0.06, months: "FHKNQUX", seasonal: false}
+      - {name: "Wheat", root: "ZW", exchange: "GLBX.MDP3", bcom_weight: 0.04, months: "HKNUZ", seasonal: true}
+      - {name: "Soybean Oil", root: "ZL", exchange: "GLBX.MDP3", bcom_weight: 0.03, months: "FHKNQUVZ", seasonal: false}
+      - {name: "Soybean Meal", root: "ZM", exchange: "GLBX.MDP3", bcom_weight: 0.03, months: "FHKNQUVZ", seasonal: false}
+    # softs: disabled — IFUS.IMPACT data is too expensive
+    # - {name: "Sugar No.11", root: "SB", exchange: "IFUS.IMPACT", bcom_weight: 0.03, months: "HKNV", seasonal: false}
+    # - {name: "Cotton No.2", root: "CT", exchange: "IFUS.IMPACT", bcom_weight: 0.02, months: "HKNVZ", seasonal: true}
+    # - {name: "Coffee C", root: "KC", exchange: "IFUS.IMPACT", bcom_weight: 0.03, months: "HKNUZ", seasonal: false}
+    livestock:
+      - {name: "Live Cattle", root: "LE", exchange: "GLBX.MDP3", bcom_weight: 0.04, months: "GJMQVZ", seasonal: false}
+      - {name: "Lean Hogs", root: "HE", exchange: "GLBX.MDP3", bcom_weight: 0.02, months: "GJKMNQVZ", seasonal: false}
+    base_metals:
+      - {name: "Copper", root: "HG", exchange: "GLBX.MDP3", bcom_weight: 0.07, months: "HKNUZ", seasonal: false}
+      - {name: "Aluminum", root: "ALI", exchange: "GLBX.MDP3", bcom_weight: 0.05, months: "FGHJKMNQUVXZ", seasonal: false}
+      - {name: "Zinc", root: "ZNC", exchange: "GLBX.MDP3", bcom_weight: 0.03, months: "FGHJKMNQUVXZ", seasonal: false}
+      - {name: "Nickel", root: "NI", exchange: "GLBX.MDP3", bcom_weight: 0.02, months: "FGHJKMNQUVXZ", seasonal: false}
+    precious_metals:
+      - {name: "Gold", root: "GC", exchange: "GLBX.MDP3", bcom_weight: 0.07, months: "GJMQVZ", seasonal: false}
+      - {name: "Silver", root: "SI", exchange: "GLBX.MDP3", bcom_weight: 0.04, months: "HKNUZ", seasonal: false}
+
+data:
+  # Full coverage of the local data lake (GLBX.MDP3 dataset starts 2010-06-06).
+  # end_date is exclusive — last bar in lake is 2026-05-04.
+  start_date: "2010-06-06"
+  end_date: "2026-05-05"
+  max_contracts: 13            # F0..F12
+  daily_schema: "ohlcv-1d"
+  roll_offset_days: -5         # roll 5 BD before first notice / expiry
+
+strategies:
+  # The reference paper presents four carry implementations (Table 1, p.8). We
+  # register each as its own strategy so all four run side-by-side.
+  carry:                       # F3-F0 baseline (paper SR ~1.75)
+    enabled: true
+    variant: "fixed_pair"
+    front_contract: 0
+    deferred_contract: 3
+    rebalance_freq: "monthly"
+    dollar_neutral: true
+  # Alternate carry variants run side-by-side with the headline carry but
+  # are excluded from the overlay (in_overlay: false) — the paper's overlay
+  # uses one carry implementation, not all four.
+  carry_f6:                    # F6-F0 (paper SR ~1.58)
+    enabled: true
+    in_overlay: false
+    variant: "fixed_pair"
+    front_contract: 0
+    deferred_contract: 6
+    rebalance_freq: "monthly"
+    dollar_neutral: true
+  carry_beta_hedged:           # F6-F0 with beta hedge (paper SR ~1.86)
+    enabled: true
+    in_overlay: false
+    variant: "beta_hedged"
+    front_contract: 0
+    deferred_contract: 6
+    beta_lookback_days: 252
+    rebalance_freq: "monthly"
+  carry_optimised:             # Per-commodity best-pair selection (paper SR ~1.96)
+    enabled: true
+    in_overlay: false
+    variant: "optimised"
+    candidate_pairs: [[0, 2], [0, 3], [0, 4], [0, 6], [0, 8]]
+    optimisation_warmup_days: 504   # 2 years pre-backtest used to pick the pair
+    rebalance_freq: "monthly"
+  value:
+    enabled: true
+    ma_windows_years: [1, 2, 3, 4, 5]
+    n_long: 6
+    n_short: 6
+    rebalance_freq: "monthly"
+  trend:
+    enabled: true
+    lookback_days: [21, 63, 126, 252]   # 1m, 3m, 6m, 12m
+    sector_equal_weight: true
+    rebalance_freq: "daily"
+  congestion:
+    enabled: true
+    pre_roll_end_day: 4        # complete pre-roll before BD 5
+    roll_start_day: 5
+    roll_end_day: 9
+    index: "BCOM"
+  basis_momentum:
+    enabled: true
+    slope_method: "polynomial"  # Reference paper: 2nd-order polyfit to log term structure.
+                                # Use "front_spread" for the simpler (F1-F0)/F0 momentum
+                                # (the Boons-Prado formulation the paper also references).
+    poly_order: 2
+    slope_lookback_days: 63    # 3-month trend of slope
+    n_long: 5
+    n_short: 5
+    rebalance_freq: "monthly"
+  backwardation_momentum:
+    enabled: true
+    n_long: 4
+    n_short: 4
+    rebalance_freq: "monthly"
+  intraday_trend:
+    enabled: false             # requires minute data — deferred
+
+overlay:
+  weighting: "equal"
+  vol_target: 0.05
+  vol_lookback_days: 63
+  rebalance_freq: "monthly"
+
+costs:
+  default_spread_bps: 2.0
+  spread_overrides:
+    NG: 3.0
+    ZNC: 4.0
+    NI: 5.0
+    ALI: 4.0
+    CT: 3.0
+    SB: 3.0
+  time_spread_discount: 0.5   # spread trades cost 50% of outright
+  commission_per_contract: 2.50
+
+backtest:
+  # Start 5 years after data.start_date so the value signal's longest
+  # MA window (ma_windows_years up to 5) is fully warmed up before
+  # the first scored period. Adjust earlier if you accept NaN-heavy warmup.
+  start_date: "2015-06-08"
+  end_date: "2026-05-05"
+  funding_rate_bps: 0          # excess returns (already over funding)
+
+reporting:
+  profile: "cheap"            # cheap | cheap-openai | mixed | quality | quality-openai
+  briefing_model: null        # null = use profile default; else explicit model id
+  critique_model: null
+  synth_model: null
+  rounds: 1                   # extra critique→synth iterations (1 = single pass)
+  max_budget_usd: 0.30        # abort if estimated total spend exceeds; quality profile needs ~1.50
+  prompt_caching: true        # Anthropic-only optimisation; ignored for OpenAI
+  output_dir: "data/processed/reports"
