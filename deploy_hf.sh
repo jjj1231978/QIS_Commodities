@@ -12,9 +12,10 @@
 # throwaway worktree so your checkout is never touched — which matters when a
 # backtest is mid-run writing into data/processed.
 #
-# Unlike ../../quant-ml/ML_short_reversion, this repo ships no images and its
-# parquets are well under the Hub's 10 MB raw-file limit, so nothing goes
-# through Git LFS. The size gate below enforces that assumption.
+# The parquets go through Git LFS. This is not about size: the Hub's
+# pre-receive hook rejects raw binary blobs outright, and it rejected these
+# 96 KB files on the first deploy attempt. The pointer gate below catches a
+# regression before a long upload rather than after.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -141,21 +142,20 @@ trap 'git worktree remove --force "$WT" 2>/dev/null || true; rm -f "$ASKPASS"' E
     fi
 
     git add -A
+    # Unchanged files skip the LFS clean filter, so force it across the tree —
+    # without this, parquets already committed as raw blobs stay raw and the
+    # Hub rejects the push.
+    git add --renormalize .
     git commit -q -m "Deploy: Sys Commodities Research Demo ($(echo "$HEADSHA" | cut -c1-8))"
 
-    # The Hub's pre-receive hook rejects raw files over 10 MB. This repo uses no
-    # LFS, so fail here rather than after a long upload.
-    # NB: the `if` is load-bearing. Written as `[ ... ] && echo`, a false test
-    # makes the loop body's last command return 1, so the loop exits non-zero,
-    # the command substitution inherits it, and `set -e` kills this subshell
-    # silently before the push ever runs.
-    big=$(git ls-files | while read -r f; do
-              sz=$(git cat-file -s ":$f" 2>/dev/null || echo 0)
-              if [ "$sz" -gt 10000000 ]; then echo "  $f ($sz bytes)"; fi
-          done)
-    if [ -n "$big" ]; then
-        echo "ERROR: files over the Hub's 10 MB raw limit (add Git LFS or exclude them):" >&2
-        echo "$big" >&2
+    # Fail loudly rather than let the Hub reject the push after a long upload.
+    raw=$(git ls-files | grep -iE '\.(parquet|png|jpg|jpeg|db|h5|joblib|npy|pkl)$' \
+          | while read -r f; do
+                git show ":$f" | head -c 40 | grep -q git-lfs || echo "  $f"
+            done)
+    if [ -n "$raw" ]; then
+        echo "ERROR: these binaries are not LFS pointers:" >&2
+        echo "$raw" >&2
         exit 1
     fi
 

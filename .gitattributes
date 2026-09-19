@@ -1,0 +1,15 @@
+# The Hugging Face Hub's pre-receive hook rejects raw binary blobs on push
+# regardless of size, so every binary the Space ships must be an LFS pointer.
+# This repo's only binaries are the committed backtest parquets.
+*.parquet filter=lfs diff=lfs merge=lfs -text
+
+# Not shipped today, but keep the net wide so a future artifact cannot trip
+# the same pre-receive rejection.
+*.png  filter=lfs diff=lfs merge=lfs -text
+*.jpg  filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.db   filter=lfs diff=lfs merge=lfs -text
+*.h5   filter=lfs diff=lfs merge=lfs -text
+*.joblib filter=lfs diff=lfs merge=lfs -text
+*.npy  filter=lfs diff=lfs merge=lfs -text
+*.pkl  filter=lfs diff=lfs merge=lfs -text
