@@ -1,4 +1,9 @@
-"""Stats vs Reference page: realised vs benchmark Sharpe and full metric table."""
+"""Performance Metrics page: full metric table per strategy, plus a Sharpe chart.
+
+The reference comparison columns appear only when the local reference file is
+present; the page title stays stable either way and the subheadings say which
+view you are looking at.
+"""
 
 import plotly.express as px
 import streamlit as st
@@ -6,7 +11,7 @@ import streamlit as st
 from app.lib import data_loader as dl
 from app.lib.plots import build_stats_table
 
-st.title("Stats vs Reference" if dl.REFERENCE_AVAILABLE else "Stats")
+st.title("Performance Metrics")
 
 strategy_returns = dl.load_strategy_returns()
 overlay = dl.load_overlay()
