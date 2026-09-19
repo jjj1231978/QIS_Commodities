@@ -29,7 +29,7 @@ PAGES_DIR = Path(__file__).resolve().parent / "pages"
 
 pages = [
     st.Page(PAGES_DIR / "05_data.py", title="Data", icon=":material/table_view:"),
-    st.Page(PAGES_DIR / "01_performance.py", title="Performance", icon=":material/timeline:"),
+    st.Page(PAGES_DIR / "01_performance.py", title="Strategy Lab", icon=":material/timeline:"),
     st.Page(PAGES_DIR / "02_stats.py", title="Performance Metrics", icon=":material/leaderboard:"),
     st.Page(PAGES_DIR / "03_correlations.py", title="Correlations", icon=":material/grid_on:"),
 ]

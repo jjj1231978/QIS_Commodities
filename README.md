@@ -28,7 +28,7 @@ Navigation order is Data first — the tables everything else is derived from.
 | Page | Contents |
 |---|---|
 | **Data** | The two source tables, downloadable as CSV: per-strategy daily returns net of costs, and the portfolio series with every step of the vol-targeting calculation. Expanders derive each column from the code. |
-| **Performance** | Cumulative return, drawdown and rolling Sharpe (window selectable: 63/126/252/504d), headline portfolio metrics, and an expander on how the portfolio is constructed. Narrowing the strategy filter rebuilds the portfolio from the selection and flags it as a what-if |
+| **Strategy Lab** | Cumulative return, drawdown and rolling Sharpe (window selectable: 63/126/252/504d), headline portfolio metrics, and an expander on how the portfolio is constructed. Narrowing the strategy filter rebuilds the portfolio from the selection and flags it as a what-if |
 | **Performance Metrics** | Full metric table per strategy — return, vol, Sharpe, Sortino, max drawdown, Calmar — and a Sharpe bar chart. Gains reference comparison columns only where the local reference file is present; this published build ships without it |
 | **Correlations** | Strategy return correlation matrix |
 

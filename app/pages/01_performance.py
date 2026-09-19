@@ -1,4 +1,6 @@
-"""Performance page: cumulative return, drawdown, rolling Sharpe."""
+"""Strategy Lab: cumulative return, drawdown and rolling Sharpe, plus an
+interactive portfolio blend that rebuilds from whichever strategies are selected.
+"""
 
 import pandas as pd
 import plotly.express as px
@@ -12,9 +14,10 @@ from app.lib import data_loader as dl
 from app.lib.data_loader import REF_BENCHMARK
 from app.lib.plots import cumulative, drawdown, rolling_sharpe
 
-st.title("Performance")
+st.title("Strategy Lab")
 st.caption(
-    "Reproduction of systematic commodity strategies from the reference report."
+    "Per-strategy performance, and a portfolio that rebuilds from whichever "
+    "strategies you select in the sidebar."
 )
 
 strategy_returns = dl.load_strategy_returns()
