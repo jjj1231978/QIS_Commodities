@@ -22,7 +22,6 @@ STRATEGIES = [
     "trend",
     "congestion",
     "basis_momentum",
-    "backwardation_momentum",
 ]
 
 # Reference-report figures are NOT in this repo — they are third-party research

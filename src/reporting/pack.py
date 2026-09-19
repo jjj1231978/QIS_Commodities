@@ -31,7 +31,6 @@ STRATEGIES = [
     "trend",
     "congestion",
     "basis_momentum",
-    "backwardation_momentum",
 ]
 
 
@@ -84,8 +83,6 @@ STRATEGY_INVENTORY = [
      "definition": "Two-basket pre-roll (paper p.16-17): long basket fully rolled by BD pre_roll_end, short basket replicates BCOM rolling BD 5-9. Net = LONG (F1-F0) spread, ramping BD 1->pre_roll_end, decaying BD roll_start->roll_end. Flat otherwise."},
     {"name": "basis_momentum", "module": "src/signals/basis_momentum.py",
      "definition": "Cross-sectional: rank by 3-month change in curve slope (2nd-order polyfit to log term structure, the reference paper's preferred method)."},
-    {"name": "backwardation_momentum", "module": "src/signals/backwardation_momentum.py",
-     "definition": "Cross-sectional level of F0/F12 (seasonality-neutral curve slope); long backwardated, short contangoed."},
 ]
 
 
@@ -120,8 +117,9 @@ PAPER_REFERENCE = load_paper_reference()
 # Known gaps in this implementation relative to the reference paper. Surfaced to
 # agents so they don't have to discover them from the data alone.
 KNOWN_GAPS = [
+    "Backwardation momentum was removed from the project. Its F0/F12 slope needs a far contract this universe does not carry: only CL and NG have F12 at >=80% coverage, and the median month offered 5 rankable names against a 6-name floor. A shallower pairing would restore the cross-section but forfeit the 12-month seasonality neutrality that is the signal's rationale.",
     "Universe is restricted to BCOM constituents available on Databento `GLBX.MDP3` (CME). ICE-listed soft commodities (Sugar, Cotton, Coffee on IFUS.IMPACT) and Gas Oil (IFEU.IMPACT) are stubbed in config but disabled — the paper uses the full BCOM universe.",
-    "Backtest start is 2015-06-08 (5y warmup after data lake start 2010-06-06 to give the value strategy's longest 5y MA enough history). Paper sample windows are 2003–2024 for carry / 2002–2024 for trend / 2006–2024 for value, basis momentum, backwardation momentum.",
+    "Backtest start is 2015-06-08 (5y warmup after data lake start 2010-06-06 to give the value strategy's longest 5y MA enough history). Paper sample windows are 2003–2024 for carry / 2002–2024 for trend / 2006–2024 for value and basis momentum.",
     "Intraday trend (paper page 13–15, SR 0.50) is out of scope — it requires minute bars. The signal module is stubbed in `src/signals/` and disabled in `configs/default.yaml`.",
     "All four paper carry variants are now implemented and run side-by-side: carry (F3-F0), carry_f6 (F6-F0), carry_beta_hedged (F6-F0 with rolling 252d beta), carry_optimised (per-commodity best-pair selection from candidate set [(0,2),(0,3),(0,4),(0,6),(0,8)] using a 504-day pre-backtest warmup).",
     "Cost model is per-commodity bid-ask spread (default 2 bps, NG/ZNC/NI/ALI/CT/SB overrides) plus a fixed commission per contract. Time-spread trades (carry, congestion) get a 50% spread discount. No market-impact term and no borrow / margin financing.",

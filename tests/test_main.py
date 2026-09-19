@@ -54,8 +54,6 @@ def _write_minimal_config(tmp_path) -> str:
             "basis_momentum": {"enabled": False, "poly_order": 2,
                                 "slope_lookback_days": 63, "n_long": 1, "n_short": 1,
                                 "rebalance_freq": "monthly"},
-            "backwardation_momentum": {"enabled": False, "n_long": 1, "n_short": 1,
-                                         "rebalance_freq": "monthly"},
         },
         "overlay": {"weighting": "equal", "vol_target": 0.05, "vol_lookback_days": 63},
         "costs": {"default_spread_bps": 2.0, "spread_overrides": {},

@@ -42,7 +42,7 @@ def test_pack_marks_no_run_when_processed_empty(tmp_path):
     pack = build_research_pack(processed_dir=tmp_path)
     assert pack["pipeline_run_status"] == "no_run_yet"
     for name in ("carry", "value", "trend", "congestion", "basis_momentum",
-                 "backwardation_momentum"):
+                 ):
         assert pack["strategies_summary"][name]["status"] == "not_yet_produced"
     assert pack["overlay_summary"]["status"] == "not_yet_produced"
     assert pack["stats_csv"]["status"] == "not_yet_produced"
@@ -83,7 +83,7 @@ def test_pack_paper_reference_complete():
 
     per = PAPER_REFERENCE["per_strategy"]
     for s in ("carry", "value", "trend", "congestion", "basis_momentum",
-              "backwardation_momentum"):
+              ):
         assert s in per, f"PAPER_REFERENCE missing strategy {s}"
         for col in ("sharpe", "ann_return", "ann_vol", "max_dd"):
             assert col in per[s], f"PAPER_REFERENCE.{s} missing {col}"

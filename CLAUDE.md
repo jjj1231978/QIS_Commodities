@@ -41,8 +41,7 @@ src/
 │   ├── value.py        — cross-sectional mean reversion from multi-year MA
 │   ├── trend.py        — multi-lookback (1m/3m/6m/12m) momentum
 │   ├── congestion.py   — pre-roll strategy around BCOM BD 5-9
-│   ├── basis_momentum.py — trend of curve slope
-│   └── backwardation_momentum.py — rank by curve slope level
+│   └── basis_momentum.py — trend of curve slope
 ├── backtest/
 │   ├── engine.py       — weights → daily PnL
 │   ├── costs.py        — per-commodity spread + commission model

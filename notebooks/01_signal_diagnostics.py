@@ -34,7 +34,6 @@ STRATEGIES = [
     "trend",
     "congestion",
     "basis_momentum",
-    "backwardation_momentum",
 ]
 
 # --------------------------------------------------------------------------

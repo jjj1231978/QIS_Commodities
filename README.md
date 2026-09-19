@@ -11,9 +11,9 @@ license: mit
 
 # Sys Commodities Research Demo
 
-Six systematic commodity-futures strategies — carry, value, trend, congestion,
-basis momentum and backwardation momentum — built on a common F0–F12 term
-structure panel and combined into one vol-targeted portfolio.
+Five systematic commodity-futures strategies — carry, value, trend, congestion,
+and basis momentum — built on a common F0–F12 term structure panel and combined
+into one vol-targeted portfolio.
 
 Backtest runs **2015-06-08 → 2026-05-04** (3,391 trading days) over 17 CME-listed
 BCOM constituents, net of modelled transaction costs.
@@ -36,32 +36,31 @@ Net of costs, full sample:
 
 | Strategy | Sharpe | Return | Vol | Max DD |
 |---|---|---|---|---|
-| Carry | 1.15 | 7.7% | 6.7% | −7.2% |
-| Value | 0.76 | 7.7% | 10.1% | −21.8% |
-| Trend | 0.08 | 0.5% | 6.4% | −22.8% |
-| Congestion | −0.30 | −0.2% | 0.6% | −4.0% |
-| Basis momentum | −0.40 | −4.0% | 10.0% | −51.9% |
-| Backwardation momentum | −0.46 | −1.5% | 3.2% | −19.2% |
-| **Portfolio** | **0.53** | **2.9%** | **5.4%** | **−15.1%** |
+| Carry | 1.15 | 7.7% | 6.7% | -7.2% |
+| Value | 0.64 | 6.7% | 10.6% | -23.1% |
+| Trend | 0.08 | 0.5% | 6.4% | -22.8% |
+| Congestion | -0.30 | -0.2% | 0.6% | -4.0% |
+| Basis momentum | -0.41 | -4.2% | 10.3% | -53.3% |
+| **Portfolio** | **0.47** | **2.5%** | **5.5%** | **-14.8%** |
 
-Carry and value carry the book.
-
-> **The backwardation momentum figure above is not a result.** The committed
-> artifacts predate a fix to `_rank_to_weights`: a rebalance that could not rank
-> enough names wrote an explicit zero row, which then forward-filled and flattened
-> the book until the next successful rebalance. Combined with the F12 requirement
-> starving the cross-section, that held the strategy flat on 97.6% of days — its
-> −0.46 Sharpe reflects roughly 80 days of trading over eleven years, not the
-> strategy. Two changes address it: `_rank_to_weights` now holds the previous
-> position instead of flattening, and `n_long`/`n_short` drop from 4 to 3 so the
-> six-name floor can actually be met in a universe where only ~11 roots carry a
-> deep enough curve. These numbers will change when the pipeline is next re-run.
-> `value` and `basis_momentum` shared the code path and are affected to a lesser
-> degree.
+Carry and value carry the book. Basis momentum and congestion detract over this
+sample — see "Known limitations" before reading much into either.
 
 Congestion's near-flat line is expected rather than broken: it is deliberately out
 of the market outside business days 1–9, so ~60% of days are genuinely zero, and
 its 0.6% vol makes it a hairline next to the others.
+
+### Why there are five strategies, not six
+
+A sixth, **backwardation momentum**, was removed. It ranks on `F0/F12`, choosing
+contracts twelve months apart so seasonal effects cancel — but this universe does
+not carry that curve. Only WTI and natural gas have an F12 populated on ≥80% of
+days; silver's liquid curve is two contracts deep, gold's four. The median month
+offered five rankable names against a six-name floor, so the strategy held a
+position on 4.2% of days. A shallower pairing (F0/F6 gives twelve names) would
+restore the cross-section but forfeit the seasonality neutrality that is the
+signal's entire rationale, so the sleeve was dropped rather than quietly
+redefined.
 
 ## How it is built
 

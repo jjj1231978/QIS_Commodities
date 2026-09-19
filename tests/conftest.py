@@ -131,12 +131,6 @@ def sample_config():
                 "n_short": 2,
                 "rebalance_freq": "monthly",
             },
-            "backwardation_momentum": {
-                "enabled": True,
-                "n_long": 2,
-                "n_short": 2,
-                "rebalance_freq": "monthly",
-            },
         },
         "overlay": {
             "weighting": "equal",

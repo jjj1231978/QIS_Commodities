@@ -15,7 +15,6 @@ from src.config import PROCESSED_DIR, load_config
 from src.data.fetch import fetch_all_commodities
 from src.data.term_structure import build_term_structure
 from src.data.universe import Universe
-from src.signals.backwardation_momentum import BackwardationMomentumSignal
 from src.signals.basis_momentum import BasisMomentumSignal
 from src.signals.carry import (
     CarryBetaHedged,
@@ -43,7 +42,6 @@ STRATEGY_CLASSES = {
     "trend": TrendSignal,
     "congestion": CongestionSignal,
     "basis_momentum": BasisMomentumSignal,
-    "backwardation_momentum": BackwardationMomentumSignal,
 }
 
 # Which strategies trade time spreads (affects cost model)
