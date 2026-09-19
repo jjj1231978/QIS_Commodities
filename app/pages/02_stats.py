@@ -15,7 +15,7 @@ if not strategy_returns and overlay is None:
     dl.render_no_data_warning()
     st.stop()
 
-strategy_returns, overlay, _, show_overlay, _, _ = dl.render_sidebar(strategy_returns, overlay)
+strategy_returns, overlay, _, show_overlay, _ = dl.render_sidebar(strategy_returns, overlay)
 
 stats = build_stats_table(strategy_returns, overlay if show_overlay else None)
 

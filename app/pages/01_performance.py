@@ -23,7 +23,7 @@ if not strategy_returns and overlay is None:
     dl.render_no_data_warning()
     st.stop()
 
-strategy_returns, overlay, selected, show_overlay, log_scale, rolling_window = dl.render_sidebar(
+strategy_returns, overlay, selected, show_overlay, log_scale = dl.render_sidebar(
     strategy_returns, overlay
 )
 sel_returns = {k: v for k, v in strategy_returns.items() if k in selected}
@@ -106,7 +106,18 @@ fig_dd.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
 fig_dd.update_yaxes(tickformat=".0%")
 st.plotly_chart(fig_dd, width="stretch")
 
-st.subheader(f"Rolling Sharpe ({rolling_window}d)")
+st.subheader("Rolling Sharpe")
+# This control drives only the chart below it, so it sits here rather than in the
+# shared sidebar, where it looked global but affected nothing on the other pages.
+rolling_window = st.select_slider(
+    "Window",
+    options=[63, 126, 252, 504],
+    value=252,
+    format_func=lambda d: f"{d}d  ({d // 21}m)",
+    key="perf_rolling_window",
+    help="Trailing window for the Sharpe calculation. Shorter is noisier and starts "
+         "earlier; longer is smoother but discards more history at the start.",
+)
 rs_df = pd.DataFrame({k: rolling_sharpe(v, rolling_window) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     rs_df["portfolio"] = rolling_sharpe(overlay["scaled_return"].dropna(), rolling_window)

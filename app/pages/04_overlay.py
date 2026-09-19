@@ -21,7 +21,7 @@ if not strategy_returns and overlay is None:
     dl.render_no_data_warning()
     st.stop()
 
-strategy_returns, overlay, _, _, _, _ = dl.render_sidebar(strategy_returns, overlay)
+strategy_returns, overlay, _, _, _ = dl.render_sidebar(strategy_returns, overlay)
 
 if overlay is None:
     st.info("No overlay file found. Run the pipeline with ≥2 strategies enabled.")

@@ -82,8 +82,13 @@ def render_no_data_warning() -> None:
 def render_sidebar(
     strategy_returns: dict[str, pd.Series],
     overlay: pd.DataFrame | None,
-) -> tuple[dict[str, pd.Series], pd.DataFrame | None, list[str], bool, bool, int]:
+) -> tuple[dict[str, pd.Series], pd.DataFrame | None, list[str], bool, bool]:
     """Render shared sidebar filters and return the filtered data + selections.
+
+    Only controls that affect every page belong here. A control that drives one
+    chart lives beside that chart instead — the rolling-Sharpe window used to sit
+    in this sidebar, where it read as global but moved nothing on four of the five
+    pages.
 
     Widget keys are stable so values persist across pages.
     """
@@ -97,9 +102,6 @@ def render_sidebar(
         "Show portfolio", value=overlay is not None, key="filter_show_overlay"
     )
     log_scale = st.sidebar.checkbox("Log scale (cumulative)", value=False, key="filter_log_scale")
-    rolling_window = st.sidebar.slider(
-        "Rolling window (days)", 63, 504, 252, 63, key="filter_rolling_window"
-    )
 
     if strategy_returns:
         date_min = min(r.index.min() for r in strategy_returns.values())
@@ -117,4 +119,4 @@ def render_sidebar(
             if overlay is not None:
                 overlay = overlay.loc[d0:d1]
 
-    return strategy_returns, overlay, selected, show_overlay, log_scale, rolling_window
+    return strategy_returns, overlay, selected, show_overlay, log_scale

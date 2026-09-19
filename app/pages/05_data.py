@@ -20,7 +20,7 @@ if not strategy_returns and overlay is None:
     dl.render_no_data_warning()
     st.stop()
 
-strategy_returns, overlay, _, _, _, _ = dl.render_sidebar(strategy_returns, overlay)
+strategy_returns, overlay, _, _, _ = dl.render_sidebar(strategy_returns, overlay)
 
 if strategy_returns:
     st.subheader("Strategy returns")
