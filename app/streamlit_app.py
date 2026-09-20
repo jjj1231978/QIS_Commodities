@@ -25,6 +25,12 @@ st.set_page_config(
     layout="wide",
 )
 
+from app.lib.theme import apply_page_chrome  # noqa: E402
+
+# Must precede st.navigation: anything the entry script emits after nav.run()
+# is discarded, because the page script has already closed the main container.
+apply_page_chrome()
+
 PAGES_DIR = Path(__file__).resolve().parent / "pages"
 
 # File numbering matches navigation order, and each url_path matches its label so a

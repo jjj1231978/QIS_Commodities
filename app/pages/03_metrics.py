@@ -10,6 +10,7 @@ import streamlit as st
 
 from app.lib import data_loader as dl
 from app.lib.plots import build_stats_table
+from app.lib.theme import ACCENT, MUTED, label, plot, sharpe_bar
 
 st.title("Performance Metrics")
 
@@ -63,12 +64,18 @@ st.dataframe(
 
 if dl.REFERENCE_AVAILABLE:
     st.subheader("Sharpe ratio: realised vs reference")
-    sr_compare = stats[["sharpe_ratio", "ref_sharpe"]].dropna()
-    sr_compare = sr_compare.rename(columns={"sharpe_ratio": "Realised", "ref_sharpe": "Reference"})
+    sr = stats[["sharpe_ratio", "ref_sharpe"]].dropna()
+    fig = px.bar(
+        sr.rename(index=label, columns={"sharpe_ratio": "Realised", "ref_sharpe": "Reference"}),
+        barmode="group",
+    )
+    fig.update_layout(yaxis_title="Sharpe", xaxis_title="", hovermode="closest")
+    fig.add_hline(y=0, line_width=1, line_color=MUTED)
+    fig.update_traces(marker_line_width=0)
+    fig.data[0].marker.color = ACCENT
+    fig.data[1].marker.color = "#C77B3C"
+    plot(fig, height=380)
 else:
     st.subheader("Sharpe ratio by strategy")
-    sr_compare = stats[["sharpe_ratio"]].dropna().rename(columns={"sharpe_ratio": "Realised"})
-fig = px.bar(sr_compare, barmode="group")
-fig.update_layout(yaxis_title="Sharpe", xaxis_title="Strategy", legend_title="")
-fig.update_layout(height=380, margin=dict(l=10, r=10, t=10, b=10))
-st.plotly_chart(fig, width="stretch")
+    # sharpe_bar handles sign, the zero line, and pinning the portfolio last.
+    plot(sharpe_bar(stats["sharpe_ratio"].dropna().to_dict()), height=380)

@@ -13,6 +13,7 @@ from src.config import load_config
 from app.lib import data_loader as dl
 from app.lib.data_loader import REF_BENCHMARK
 from app.lib.plots import cumulative, drawdown, rolling_sharpe
+from app.lib.theme import plot, style_strategies
 
 st.title("Strategy Lab")
 st.caption(
@@ -46,7 +47,7 @@ if _whatif:
     )
     overlay = rebuilt if not rebuilt.empty else overlay
 _pf_label = f"Portfolio ({len(selected)} of {len(strategy_returns)})" if _whatif else "Portfolio"
-_pf_series = "portfolio (selected)" if _whatif else "portfolio"
+_pf_series = "portfolio"   # stable key: style_strategies matches on it
 
 # Headline metrics
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
@@ -72,7 +73,7 @@ if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     c1.metric(f"{_pf_label} Sharpe", f"{m['sharpe_ratio']:.2f}", _ref("ref_sharpe", ".2f"))
     c2.metric(f"{_pf_label} Return", f"{m['annualized_return']:.1%}", _ref("ref_return", ".1%"))
     c3.metric(f"{_pf_label} Vol", f"{m['annualized_vol']:.1%}", _ref("ref_vol", ".1%"))
-    c4.metric(f"{_pf_label} MaxDD", f"{m['max_drawdown']:.1%}", _ref("ref_max_dd", ".1%"))
+    c4.metric(f"{_pf_label} max drawdown", f"{m['max_drawdown']:.1%}", _ref("ref_max_dd", ".1%"))
     dr = compute_diversification_ratio(sel_returns or strategy_returns)
     c5.metric("Diversification ratio", f"{dr:.2f}", "Ref: ~2.0" if _has_ref else None)
 
@@ -119,22 +120,23 @@ st.subheader("Cumulative return (net of costs)")
 cum_df = pd.DataFrame({k: cumulative(v) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     cum_df[_pf_series] = cumulative(overlay["scaled_return"].dropna())
-fig = px.line(cum_df)
-fig.update_layout(yaxis_title="cum ret", xaxis_title="Date", legend_title="Strategy")
+# render_mode="svg" on every line chart here: px.area below emits `scatter`,
+# and px.line would auto-switch to `scattergl` past ~1000 points, giving one
+# page two renderers, two hover behaviours and two antialiasing results.
+fig = px.line(cum_df, render_mode="svg")
+fig.update_layout(yaxis_title="Cumulative return", xaxis_title="Date")
 if log_scale:
     fig.update_yaxes(type="log")
-fig.update_layout(height=420, margin=dict(l=10, r=10, t=10, b=10))
-st.plotly_chart(fig, width="stretch")
+plot(style_strategies(fig), height=420)
 
 st.subheader("Drawdown")
 dd_df = pd.DataFrame({k: drawdown(v) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     dd_df[_pf_series] = drawdown(overlay["scaled_return"].dropna())
 fig_dd = px.area(dd_df)
-fig_dd.update_layout(yaxis_title="Drawdown", xaxis_title="Date", legend_title="Strategy")
-fig_dd.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
+fig_dd.update_layout(yaxis_title="Drawdown", xaxis_title="Date")
 fig_dd.update_yaxes(tickformat=".0%")
-st.plotly_chart(fig_dd, width="stretch")
+plot(style_strategies(fig_dd), height=320)
 
 st.subheader("Rolling Sharpe")
 # This control drives only the chart below it, so it sits here rather than in the
@@ -151,8 +153,7 @@ rolling_window = st.select_slider(
 rs_df = pd.DataFrame({k: rolling_sharpe(v, rolling_window) for k, v in sel_returns.items()})
 if show_overlay and overlay is not None and "scaled_return" in overlay.columns:
     rs_df[_pf_series] = rolling_sharpe(overlay["scaled_return"].dropna(), rolling_window)
-fig_rs = px.line(rs_df)
-fig_rs.update_layout(yaxis_title="Sharpe", xaxis_title="Date", legend_title="Strategy")
-fig_rs.update_layout(height=320, margin=dict(l=10, r=10, t=10, b=10))
-fig_rs.add_hline(y=0, line_dash="dot", line_color="grey")
-st.plotly_chart(fig_rs, width="stretch")
+fig_rs = px.line(rs_df, render_mode="svg")
+fig_rs.update_layout(yaxis_title="Sharpe", xaxis_title="Date")
+fig_rs.add_hline(y=0, line_dash="dot", line_width=1, line_color="#5B6472")
+plot(style_strategies(fig_rs), height=320)

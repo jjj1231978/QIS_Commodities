@@ -16,6 +16,8 @@ import streamlit as st
 
 from src.config import PROCESSED_DIR
 
+from app.lib import theme
+
 STRATEGIES = [
     "carry",
     "value",
@@ -92,7 +94,9 @@ def render_sidebar(
 
     Widget keys are stable so values persist across pages.
     """
-    st.sidebar.title("Systematic Commodity Futures")
+    # A styled div, not st.sidebar.title — that renders an h1, giving every
+    # page two. .qis-sidebar-title in theme.py keeps the look.
+    theme.sidebar_title("Systematic Commodity Futures")
     st.sidebar.header("Filters")
     available = list(strategy_returns.keys())
     selected = st.sidebar.multiselect(
