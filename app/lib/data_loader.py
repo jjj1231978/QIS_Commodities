@@ -92,7 +92,7 @@ def render_sidebar(
 
     Widget keys are stable so values persist across pages.
     """
-    st.sidebar.title("Sys Commodities Research Demo")
+    st.sidebar.title("Systematic Commodity Futures")
     st.sidebar.header("Filters")
     available = list(strategy_returns.keys())
     selected = st.sidebar.multiselect(

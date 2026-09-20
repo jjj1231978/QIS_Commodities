@@ -1,5 +1,5 @@
 ---
-title: Sys Commodities Research Demo
+title: Systematic Commodity Futures
 emoji: 🛢️
 colorFrom: gray
 colorTo: yellow
@@ -9,7 +9,7 @@ pinned: false
 license: mit
 ---
 
-# Sys Commodities Research Demo
+# Systematic Commodity Futures
 
 Five systematic commodity-futures strategies — carry, value, trend, congestion,
 and basis momentum — built on a common F0–F12 term structure panel and combined
@@ -17,6 +17,10 @@ into one vol-targeted portfolio.
 
 Backtest runs **2015-06-08 → 2026-05-04** (3,391 trading days) over 17 CME-listed
 BCOM constituents, net of modelled transaction costs.
+
+[![Live demo](https://img.shields.io/badge/%F0%9F%A4%97%20Spaces-live%20viewer-yellow)](https://huggingface.co/spaces/JJ-JIN12345/qis-commodities)
+[![GitHub](https://img.shields.io/badge/GitHub-source-blue)](https://github.com/jjj1231978/QIS_Commodities)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 > **Backtested research, not a track record.** Every figure here is the output of
 > the code in this repo on historical data. Nothing has been traded.
@@ -31,9 +35,6 @@ Navigation order is Data first — the tables everything else is derived from.
 | **Strategy Lab** | Cumulative return, drawdown and rolling Sharpe (window selectable: 63/126/252/504d), headline portfolio metrics, and an expander on how the portfolio is constructed. Narrowing the strategy filter rebuilds the portfolio from the selection and flags it as a what-if |
 | **Performance Metrics** | Full metric table per strategy — return, vol, Sharpe, Sortino, max drawdown, Calmar — and a Sharpe bar chart. Gains reference comparison columns only where the local reference file is present; this published build ships without it |
 | **Correlations** | Strategy return correlation matrix |
-
-A fifth page, **Overlay detail**, exists in `app/pages/` but is not in the
-navigation; its content was folded into Performance.
 
 ## Results
 
