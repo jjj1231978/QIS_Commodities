@@ -25,7 +25,7 @@ Three tiers. Each leaves the site shippable, so you can stop after any of them.
 
 No visual changes. This tier is mostly about the project having one name.
 
-## [ ] T0.1 Settle on one project name
+## [x] T0.1 Settle on one project name
 
 **Files:** `README.md` front matter and H1, `app/streamlit_app.py`
 (`st.set_page_config(page_title=...)`), `app/pages/*.py` sidebar title
@@ -49,7 +49,7 @@ name. The browser tab, the sidebar and the README H1 all match.
 
 ---
 
-## [ ] T0.2 Make URL paths match nav labels
+## [x] T0.2 Make URL paths match nav labels
 
 **File:** `app/streamlit_app.py`
 
@@ -73,7 +73,7 @@ load from a cold browser at their new paths.
 
 ---
 
-## [ ] T0.3 Unify the strategy display names
+## [x] T0.3 Unify the strategy display names
 
 **Files:** `app/lib/theme.py` (from T1.2, which ships `DISPLAY_NAMES`),
 `app/pages/01_performance.py`, `app/pages/02_stats.py`,
@@ -105,7 +105,7 @@ CSVs and confirm the headers are byte-identical to before.
 
 ---
 
-## [ ] T0.4 Resolve the unnavigable overlay page
+## [x] T0.4 Resolve the unnavigable overlay page
 
 **File:** `app/pages/04_overlay.py`
 
@@ -128,7 +128,7 @@ a fifth page. Every page still renders.
 
 ---
 
-## [ ] T0.5 Renumber the page files to match the navigation
+## [x] T0.5 Renumber the page files to match the navigation
 
 **Files:** `app/pages/*.py`, `app/streamlit_app.py`
 
@@ -154,7 +154,7 @@ Do this **after** T0.4, so you are not renumbering a file you are about to delet
 
 ---
 
-## [ ] T0.6 Add badges and a GitHub link to the README
+## [x] T0.6 Add badges and a GitHub link to the README
 
 **File:** `README.md`
 
@@ -174,7 +174,7 @@ track record" blockquote, which stays where it is:
 
 ---
 
-## [ ] T0.7 Put ceilings on the runtime dependencies
+## [x] T0.7 Put ceilings on the runtime dependencies
 
 **File:** `requirements-space.txt`
 
@@ -199,7 +199,7 @@ build immediately. This is the one task here that can take the Space down.
 
 ---
 
-## [ ] T0.8 Keep internal files out of the Space build
+## [x] T0.8 Keep internal files out of the Space build
 
 **File:** `deploy_hf.sh`
 
@@ -216,7 +216,7 @@ and the README: the README's published/not-published table promises them.
 
 # Tier 1: the visual system
 
-## [ ] T1.1 Install the theme config
+## [x] T1.1 Install the theme config
 
 **File:** `.streamlit/config.toml`, source at `refinement/assets/streamlit-config.toml`
 
@@ -236,7 +236,7 @@ The port is still 7860.
 
 ---
 
-## [ ] T1.2 Add the shared UI module
+## [x] T1.2 Add the shared UI module
 
 **File:** `app/lib/theme.py` (new), source at `refinement/assets/theme.py`
 
@@ -261,7 +261,7 @@ prints `ok`.
 
 ---
 
-## [ ] T1.3 Wire the chrome into the entry point
+## [x] T1.3 Wire the chrome into the entry point
 
 **File:** `app/streamlit_app.py`
 
@@ -288,7 +288,7 @@ by eye. At 390px there is no horizontal scroll.
 
 ---
 
-## [ ] T1.4 Route every chart through `plot()`
+## [x] T1.4 Route every chart through `plot()`
 
 **Files:** `app/pages/*.py`, `app/lib/plots.py`
 
@@ -314,7 +314,7 @@ page. Every chart shares one font, one grid treatment, one palette.
 
 ---
 
-## [ ] T1.5 Fix the strategy colour encoding
+## [x] T1.5 Fix the strategy colour encoding
 
 **Files:** `app/pages/01_performance.py` (or its renamed form), `app/lib/plots.py`
 
@@ -350,7 +350,7 @@ confusable. Nothing is red. Colours survive a change to the strategy filter.
 
 ---
 
-## [ ] T1.6 Rebuild the Sharpe bar chart
+## [x] T1.6 Rebuild the Sharpe bar chart
 
 **Files:** `app/pages/02_stats.py` (or its renamed form)
 
@@ -371,7 +371,7 @@ distinguishable from the sleeves. A zero line is drawn.
 
 ---
 
-## [ ] T1.7 Give each page a single H1
+## [x] T1.7 Give each page a single H1
 
 **Files:** `app/pages/*.py`, or wherever the sidebar title is rendered
 
@@ -389,7 +389,7 @@ title looks unchanged.
 
 # Tier 2: framing
 
-## [ ] T2.1 Fix the Correlations caption
+## [x] T2.1 Fix the Correlations caption
 
 **File:** `app/pages/03_correlations.py` (or its renamed form)
 
@@ -413,7 +413,7 @@ the missing reference in the same words.
 
 ---
 
-## [ ] T2.2 Frame the result on the landing page
+## [x] T2.2 Frame the result on the landing page
 
 **File:** `app/pages/05_data.py` (or `01_data.py` after T0.5)
 
@@ -451,7 +451,7 @@ over what period and universe, that it is backtested, and which sleeves drive it
 
 ---
 
-## [ ] T2.3 Move chart-scoping out of control labels
+## [x] T2.3 Move chart-scoping out of control labels
 
 **File:** wherever the sidebar filters are built
 
@@ -467,13 +467,13 @@ scope is not obvious.
 
 # Verification
 
-## [ ] V1 Tests
+## [x] V1 Tests
 
 The Space file tree has no `tests/`, but the README says tests are published and
 gives `pytest tests/`. Check the GitHub repo. If a suite exists, run it and confirm
 it passes. If not, say so and check each page by hand instead.
 
-## [ ] V2 Every page, three widths
+## [x] V2 Every page, three widths
 
 All four pages at 390px, 1280px and 1920px:
 
@@ -484,7 +484,7 @@ All four pages at 390px, 1280px and 1920px:
 - sidebar collapsed at 390px
 - both CSV downloads still work and their headers are unchanged
 
-## [ ] V3 Colour and contrast
+## [x] V3 Colour and contrast
 
 - body text on background meets WCAG AA. `#1A1D24` on `#FFFFFF` passes.
 - `MUTED` `#5B6472` on `#FFFFFF` is 6.0:1, fine for captions.
@@ -492,7 +492,7 @@ All four pages at 390px, 1280px and 1920px:
 - print the cumulative chart in greyscale: all six series still tellable apart, and
   the portfolio still reads as the heaviest line.
 
-## [ ] V4 Filter interaction
+## [x] V4 Filter interaction
 
 On Strategy Lab, deselect two strategies and confirm the remaining series keep their
 colours, the portfolio stays on top, and the what-if flag still appears. Colour

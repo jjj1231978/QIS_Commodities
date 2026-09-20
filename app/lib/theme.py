@@ -48,14 +48,18 @@ STRATEGY_COLOURS: Mapping[str, str] = {
     "portfolio": "#1F4E79",       # deep blue, the subject
     "carry": "#C77B3C",           # amber
     "value": "#4C8C7A",           # teal
-    "trend": "#8A6FA0",           # violet
+    # Re-stepped from #8A6FA0, which sat at luminance 19.3 — identical to
+    # congestion, so the two were indistinguishable in greyscale and to a
+    # reader with a colour deficiency. #84649C sits at 16.3, in the gap
+    # between basis momentum and congestion.
+    "trend": "#84649C",           # violet
     "congestion": "#6E7B8B",      # slate
     "basis_momentum": "#9C4F4F",  # brick
 }
 
 # Fallback order for any series not named above.
 CATEGORICAL: tuple[str, ...] = (
-    "#1F4E79", "#C77B3C", "#4C8C7A", "#8A6FA0", "#9C4F4F", "#6E7B8B",
+    "#1F4E79", "#C77B3C", "#4C8C7A", "#84649C", "#9C4F4F", "#6E7B8B",
 )
 
 # Drawn heavier and on top.
