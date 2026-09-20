@@ -6,11 +6,37 @@ import streamlit as st
 from src.config import load_config
 
 from app.lib import data_loader as dl
+from app.lib.theme import page_header
 
-st.title("Data")
+# Wording is lifted from the README so the two cannot drift, and introduces
+# no number the README does not already carry.
+page_header(
+    title="Systematic commodity futures strategies",
+    standfirst=(
+        "Five signals built on a common F0 to F12 term structure panel — carry, "
+        "value, trend, congestion and basis momentum — combined into one "
+        "vol-targeted portfolio. Backtested research, not a track record."
+    ),
+    meta=(
+        "2015-06-08 to 2026-05-04 &nbsp;·&nbsp; 3,391 trading days &nbsp;·&nbsp; "
+        "17 CME-listed BCOM constituents &nbsp;·&nbsp; net of modelled "
+        "transaction costs"
+    ),
+)
+
+st.markdown(
+    "Carry and value carry the book. Trend is flat and basis momentum detracts "
+    "over this sample, and congestion is deliberately out of the market outside "
+    "business days 1 to 9, so its line is a near-flat hairline by construction "
+    "rather than a fault. A sixth strategy, backwardation momentum, was removed "
+    "because this universe does not carry the F12 contract its signal needs — "
+    "the reasoning, and four further limitations, are documented in the "
+    "[README](https://github.com/jjj1231978/QIS_Commodities#known-limitations)."
+)
+
 st.caption(
-    "The tables the rest of the dashboard is computed from, shown raw and "
-    "downloadable. Every figure elsewhere traces back to these two frames."
+    "This page holds the two source tables everything else is computed from, "
+    "shown raw and downloadable."
 )
 
 strategy_returns = dl.load_strategy_returns()

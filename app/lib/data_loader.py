@@ -16,6 +16,8 @@ import streamlit as st
 
 from src.config import PROCESSED_DIR
 
+from app.lib import theme
+
 STRATEGIES = [
     "carry",
     "value",
@@ -92,16 +94,32 @@ def render_sidebar(
 
     Widget keys are stable so values persist across pages.
     """
-    st.sidebar.title("Sys Commodities Research Demo")
+    # A styled div, not st.sidebar.title — that renders an h1, giving every
+    # page two. .qis-sidebar-title in theme.py keeps the look.
+    theme.sidebar_title("Systematic Commodity Futures")
     st.sidebar.header("Filters")
     available = list(strategy_returns.keys())
     selected = st.sidebar.multiselect(
-        "Strategies", available, default=available, key="filter_strategies"
+        "Strategies",
+        available,
+        default=available,
+        key="filter_strategies",
+        help="Narrowing this rebuilds the portfolio from the selection and marks "
+             "it as a what-if.",
     )
     show_overlay = st.sidebar.checkbox(
-        "Show portfolio", value=overlay is not None, key="filter_show_overlay"
+        "Show portfolio",
+        value=overlay is not None,
+        key="filter_show_overlay",
+        help="Draws the combined vol-targeted book alongside the individual "
+             "strategies.",
     )
-    log_scale = st.sidebar.checkbox("Log scale (cumulative)", value=False, key="filter_log_scale")
+    log_scale = st.sidebar.checkbox(
+        "Log scale",
+        value=False,
+        key="filter_log_scale",
+        help="Applies to the cumulative return chart on Strategy Lab.",
+    )
 
     if strategy_returns:
         date_min = min(r.index.min() for r in strategy_returns.values())

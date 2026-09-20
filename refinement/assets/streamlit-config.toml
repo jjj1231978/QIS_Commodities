@@ -1,5 +1,5 @@
 # .streamlit/config.toml
-# Systematic Commodity Futures: institutional research theme.
+# Sys Commodities Research Demo: institutional research theme.
 #
 # The [server] and [browser] blocks below are the repo's existing settings,
 # copied verbatim including the port comment. Everything from [client] down

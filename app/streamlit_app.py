@@ -1,4 +1,4 @@
-"""Streamlit entry point for the Sys Commodities Research Demo dashboard.
+"""Streamlit entry point for the Systematic Commodity Futures dashboard.
 
 Run from the repo root:
 
@@ -20,18 +20,30 @@ if str(PROJECT_ROOT) not in sys.path:
 import streamlit as st
 
 st.set_page_config(
-    page_title="Sys Commodities Research Demo",
+    page_title="Systematic Commodity Futures",
     page_icon=":bar_chart:",
     layout="wide",
 )
 
+from app.lib.theme import apply_page_chrome  # noqa: E402
+
+# Must precede st.navigation: anything the entry script emits after nav.run()
+# is discarded, because the page script has already closed the main container.
+apply_page_chrome()
+
 PAGES_DIR = Path(__file__).resolve().parent / "pages"
 
+# File numbering matches navigation order, and each url_path matches its label so a
+# shared link names the page it opens. Data is the default page and takes "/".
 pages = [
-    st.Page(PAGES_DIR / "05_data.py", title="Data", icon=":material/table_view:"),
-    st.Page(PAGES_DIR / "01_performance.py", title="Strategy Lab", icon=":material/timeline:"),
-    st.Page(PAGES_DIR / "02_stats.py", title="Performance Metrics", icon=":material/leaderboard:"),
-    st.Page(PAGES_DIR / "03_correlations.py", title="Correlations", icon=":material/grid_on:"),
+    st.Page(PAGES_DIR / "01_data.py", title="Data",
+            icon=":material/table_view:", default=True),
+    st.Page(PAGES_DIR / "02_strategy_lab.py", title="Strategy Lab",
+            icon=":material/timeline:", url_path="strategy-lab"),
+    st.Page(PAGES_DIR / "03_metrics.py", title="Performance Metrics",
+            icon=":material/leaderboard:", url_path="metrics"),
+    st.Page(PAGES_DIR / "04_correlations.py", title="Correlations",
+            icon=":material/grid_on:", url_path="correlations"),
 ]
 
 nav = st.navigation(pages)

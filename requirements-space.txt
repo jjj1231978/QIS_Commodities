@@ -7,15 +7,18 @@
 # jupyter and the test tooling are all omitted; shipping them would inflate the
 # image for code that cannot execute here.
 #
+# Ceilings are set above the majors this project currently resolves to
+# (plotly 7.x, pandas 3.x) — NOT below them. A <7.0 plotly or <3.0 pandas
+# cap fails the Space build immediately.
 # Keep the shared pins in sync with requirements.txt. If a page starts importing
 # a pipeline module, add its deps HERE too or the Space builds fine and then
 # fails at runtime on that page.
 
-pandas>=2.0
-numpy>=1.24
-pyarrow>=15.0            # parquet engine for pd.read_parquet
+pandas>=2.0,<4.0
+numpy>=1.24,<3.0
+pyarrow>=15.0,<22.0            # parquet engine for pd.read_parquet
 
-streamlit>=1.30
-plotly>=5.18
+streamlit>=1.30,<2.0
+plotly>=5.18,<8.0
 
-pyyaml>=6.0              # src/config.load_config
+pyyaml>=6.0,<7.0              # src/config.load_config

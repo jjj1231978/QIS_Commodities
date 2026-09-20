@@ -131,8 +131,12 @@ trap 'git worktree remove --force "$WT" 2>/dev/null || true; rm -f "$ASKPASS"' E
     # tests/ and notebooks/ are never run here. src/data/ and src/reporting/
     # stay: src.config lives under src/ and the package imports must resolve,
     # but nothing under them executes on the Space (no API keys are set).
-    rm -rf tests notebooks specs .specify .claude
+    rm -rf tests notebooks specs .specify .claude refinement
     rm -f  Sys_Commodity.pdf reference_paper.pdf
+    # Agent and packaging scaffolding, not app or research. src/, configs/,
+    # data/processed/ and README.md all stay — the README's published table
+    # promises them.
+    rm -f  CLAUDE.md START-HERE-QIS-COMMODITIES.md qis-commodities-refinement.zip
 
     # Belt-and-braces: the reference figures are gitignored, so they should
     # never be in the commit at all. Fail loudly if one ever slips through.
